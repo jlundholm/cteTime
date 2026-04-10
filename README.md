@@ -56,7 +56,7 @@ sudo chmod -R 755 /opt/cteTime
 
 ```bash
 sudo apt update
-sudo apt install python3-venv python3-pip libmysqlclient-dev pkg-config mariadb-server mariadb-client
+sudo apt install python3-venv python3-pip libmysqlclient-dev pkg-config mariadb-server mariadb-client nginx
 ```
 
 ### 4. Create Database
@@ -143,8 +143,8 @@ WantedBy=multi-user.target
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable cteTime
-sudo systemctl start cteTime
+sudo systemctl enable ctetime
+sudo systemctl start ctetime
 ```
 
 ### 10. Configure Nginx
