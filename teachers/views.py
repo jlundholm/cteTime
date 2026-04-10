@@ -13,7 +13,7 @@ from django.db.models import Q, Sum, Count
 from django.core.mail import send_mail
 from django.conf import settings
 from datetime import timedelta, datetime
-from core.models import Student, Punch, Class, ClassStudent, EmailSettings, SchoolYear
+from core.models import Student, Punch, StudentClass, ClassStudent, EmailSettings, SchoolYear
 from .forms import (
     LoginForm, StudentForm, StudentCodeForm, ClassForm,
     EmailSettingsForm, TeacherForm, PunchFilterForm, ReportForm
@@ -51,7 +51,7 @@ def logout_view(request):
 def dashboard(request):
     school_year = get_current_school_year()
     
-    my_classes = Class.objects.filter(teacher=request.user, school_year=school_year)
+    my_classes = StudentClass.objects.filter(teacher=request.user, school_year=school_year)
     my_class_ids = my_classes.values_list('id', flat=True)
     my_student_ids = ClassStudent.objects.filter(
         class_model_id__in=my_class_ids
@@ -84,7 +84,7 @@ def dashboard(request):
             punch.student.clocked_in_at = punch.timestamp
             punch.student.duration = calculate_duration(punch.timestamp)
             
-            student_classes = Class.objects.filter(
+            student_classes = StudentClass.objects.filter(
                 teacher=request.user,
                 school_year=school_year,
                 classstudent__student=punch.student
@@ -94,7 +94,7 @@ def dashboard(request):
             clocked_in_list.append(punch.student)
     
     for student in clocked_in_list:
-        student_classes = Class.objects.filter(
+        student_classes = StudentClass.objects.filter(
             teacher=request.user,
             school_year=school_year,
             classstudent__student=student
@@ -118,7 +118,7 @@ def student_list(request):
     search = request.GET.get('search', '')
     class_filter = request.GET.get('class', '')
     
-    my_classes = Class.objects.filter(teacher=request.user, school_year=school_year)
+    my_classes = StudentClass.objects.filter(teacher=request.user, school_year=school_year)
     my_class_ids = my_classes.values_list('id', flat=True)
     
     students = Student.objects.annotate(
@@ -330,7 +330,7 @@ def punch_export(request):
 def report_view(request):
     school_year = get_current_school_year()
     
-    my_classes = Class.objects.filter(teacher=request.user, school_year=school_year)
+    my_classes = StudentClass.objects.filter(teacher=request.user, school_year=school_year)
     
     if request.method == 'POST':
         form = ReportForm(request.POST, teacher=request.user)
@@ -394,9 +394,9 @@ def report_send(request):
             return redirect('report')
         
         try:
-            selected_class = Class.objects.get(id=class_id, teacher=request.user)
+            selected_class = StudentClass.objects.get(id=class_id, teacher=request.user)
             week_start = datetime.strptime(week_start_str, '%Y-%m-%d').date()
-        except (Class.DoesNotExist, ValueError):
+        except (StudentClass.DoesNotExist, ValueError):
             messages.error(request, 'Invalid class or date.')
             return redirect('report')
         
@@ -434,7 +434,7 @@ def report_send(request):
 def class_list(request):
     school_year = get_current_school_year()
     
-    classes = Class.objects.filter(teacher=request.user, school_year=school_year)
+    classes = StudentClass.objects.filter(teacher=request.user, school_year=school_year)
     
     for cls in classes:
         cls.student_count = ClassStudent.objects.filter(class_model=cls).count()
@@ -523,7 +523,7 @@ def settings_view(request):
 def clear_year_view(request):
     school_year = get_current_school_year()
     
-    my_classes = Class.objects.filter(teacher=request.user, school_year=school_year)
+    my_classes = StudentClass.objects.filter(teacher=request.user, school_year=school_year)
     class_ids = my_classes.values_list('id', flat=True)
     
     class_student_count = ClassStudent.objects.filter(class_model_id__in=class_ids).count()

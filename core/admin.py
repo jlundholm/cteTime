@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Student, Class, ClassStudent, Punch, EmailSettings, SchoolYear
+from .models import Student, StudentClass, ClassStudent, Punch, EmailSettings, SchoolYear
 
 
 @admin.register(Student)
@@ -9,7 +9,7 @@ class StudentAdmin(admin.ModelAdmin):
     ordering = ['last_name', 'first_name']
 
 
-@admin.register(Class)
+@admin.register(StudentClass)
 class ClassAdmin(admin.ModelAdmin):
     list_display = ['name', 'teacher', 'school_year']
     list_filter = ['school_year', 'teacher']

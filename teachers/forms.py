@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from core.models import Student, Class, EmailSettings
+from core.models import Student, StudentClass, ClassStudent, EmailSettings
 
 
 class LoginForm(AuthenticationForm):
@@ -52,7 +52,7 @@ class ClassForm(forms.ModelForm):
     )
     
     class Meta:
-        model = Class
+        model = StudentClass
         fields = ['name', 'school_year', 'students']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -130,7 +130,7 @@ class PunchFilterForm(forms.Form):
             year = now.year
             school_year = f"{year}-{year + 1}" if now.month >= 8 else f"{year - 1}-{year}"
             
-            my_classes = Class.objects.filter(teacher=teacher, school_year=school_year)
+            my_classes = StudentClass.objects.filter(teacher=teacher, school_year=school_year)
             my_class_ids = my_classes.values_list('id', flat=True)
             my_student_ids = ClassStudent.objects.filter(
                 class_model_id__in=my_class_ids
@@ -148,7 +148,7 @@ class PunchFilterForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-select'})
     )
     class_filter = forms.ModelChoiceField(
-        queryset=Class.objects.none(),
+        queryset=StudentClass.objects.none(),
         required=False,
         empty_label='All Classes',
         widget=forms.Select(attrs={'class': 'form-select'})
@@ -182,13 +182,13 @@ class ReportForm(forms.Form):
             year = now.year
             school_year = f"{year}-{year + 1}" if now.month >= 8 else f"{year - 1}-{year}"
             
-            self.fields['class_model'].queryset = Class.objects.filter(
+            self.fields['class_model'].queryset = StudentClass.objects.filter(
                 teacher=teacher,
                 school_year=school_year
             ).order_by('name')
     
     class_model = forms.ModelChoiceField(
-        queryset=Class.objects.none(),
+        queryset=StudentClass.objects.none(),
         widget=forms.Select(attrs={'class': 'form-select'}),
         label='Class'
     )

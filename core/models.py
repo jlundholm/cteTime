@@ -66,7 +66,7 @@ class Student(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 
-class Class(models.Model):
+class StudentClass(models.Model):
     name = models.CharField(max_length=100)
     teacher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='classes')
     school_year = models.CharField(max_length=9)
@@ -74,6 +74,7 @@ class Class(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
+        db_table = 'core_class'
         ordering = ['name']
         unique_together = ['name', 'teacher', 'school_year']
     
@@ -82,7 +83,7 @@ class Class(models.Model):
 
 
 class ClassStudent(models.Model):
-    class_model = models.ForeignKey(Class, on_delete=models.CASCADE)
+    class_model = models.ForeignKey(StudentClass, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     
     class Meta:

@@ -163,9 +163,13 @@ server {
         proxy_pass http://unix:/opt/cteTime/cteTime.sock;
     }
     
-    location /static/ {
-        root /opt/cteTime;
-    }
+    location /static/admin/ {
+    alias /opt/cteTime/staticfiles/admin/;
+	}
+	
+	location /static/ {
+    alias /opt/cteTime/static/;
+	}
 }
 ```
 
