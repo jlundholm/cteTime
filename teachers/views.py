@@ -62,49 +62,27 @@ def dashboard(request):
         class_model_id__in=my_class_ids
     ).values_list('student_id', flat=True)
     
-    clocked_in_students = Student.objects.filter(
-        id__in=my_student_ids,
-        punches__punch_type='IN',
-        punches__school_year=school_year
-    ).annotate(
-        last_punch_time=Punch.objects.filter(
-            student__id__in=my_student_ids,
-            punch_type='IN',
-            school_year=school_year
-        ).values('student_id').order_by('-timestamp').values('timestamp')[:1]
-    )
-    
-    punch_ins = Punch.objects.filter(
-        student_id__in=my_student_ids,
-        punch_type='IN',
-        school_year=school_year
-    ).select_related('student').order_by('-timestamp')
-    
-    clocked_in_ids = set()
     clocked_in_list = []
     
-    for punch in punch_ins:
-        if punch.student_id not in clocked_in_ids:
-            clocked_in_ids.add(punch.student_id)
-            punch.student.clocked_in_at = punch.timestamp
-            punch.student.duration = calculate_duration(punch.timestamp)
+    for student_id in my_student_ids:
+        last_punch = Punch.objects.filter(
+            student_id=student_id,
+            school_year=school_year
+        ).order_by('-timestamp').first()
+        
+        if last_punch and last_punch.punch_type == 'IN':
+            student = Student.objects.get(id=student_id)
+            student.clocked_in_at = last_punch.timestamp
+            student.duration = calculate_duration(last_punch.timestamp)
             
             student_classes = StudentClass.objects.filter(
                 teacher=request.user,
                 school_year=school_year,
-                classstudent__student=punch.student
+                classstudent__student=student
             ).values_list('name', flat=True)
-            punch.student.class_names = ', '.join(student_classes)
+            student.class_names = ', '.join(student_classes)
             
-            clocked_in_list.append(punch.student)
-    
-    for student in clocked_in_list:
-        student_classes = StudentClass.objects.filter(
-            teacher=request.user,
-            school_year=school_year,
-            classstudent__student=student
-        ).values_list('name', flat=True)
-        student.class_names = ', '.join(student_classes)
+            clocked_in_list.append(student)
     
     context = {
         'clocked_in_students': clocked_in_list,
