@@ -49,7 +49,7 @@ cd cteTime
 
 ```bash
 sudo apt update
-sudo apt install python3.11-venv python3-pip libmysqlclient-dev pkg-config
+sudo apt install python3-venv python3-pip libmysqlclient-dev pkg-config
 ```
 
 ### 3. Create Database
