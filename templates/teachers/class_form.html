@@ -1,0 +1,69 @@
+{% extends 'teachers/base.html' %}
+
+{% block title %}{{ action }} Class - CTE Timeclock{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+        <i class="bi bi-collection"></i> {{ action }} Class
+    </h1>
+    <a href="{% url 'class_list' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Class Name</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <div class="text-danger small">{{ form.name.errors.0 }}</div>
+                    {% endif %}
+                    <div class="form-text">e.g., "Period 1", "Morning Shift", "Culinary Arts"</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">School Year</label>
+                    {{ form.school_year }}
+                    {% if form.school_year.errors %}
+                        <div class="text-danger small">{{ form.school_year.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label class="form-label">Students</label>
+                {% if form.students.errors %}
+                    <div class="text-danger small">{{ form.students.errors.0 }}</div>
+                {% endif %}
+                <div class="border rounded p-3" style="max-height: 300px; overflow-y: auto;">
+                    {% for checkbox in form.students %}
+                    <div class="form-check">
+                        {{ checkbox }}
+                        <label class="form-check-label" for="{{ checkbox.id_for_label }}">
+                            {{ checkbox.choice_label }}
+                        </label>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">No students available. Add students first.</p>
+                    {% endfor %}
+                </div>
+                <div class="form-text">Select students to include in this class</div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> {{ action }} Class
+                </button>
+                <a href="{% url 'class_list' %}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

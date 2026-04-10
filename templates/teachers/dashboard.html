@@ -1,0 +1,95 @@
+{% extends 'teachers/base.html' %}
+
+{% block title %}Dashboard - CTE Timeclock{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-speedometer2"></i> Dashboard</h1>
+    <span class="badge bg-primary fs-6">{{ school_year }}</span>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Currently Clocked In</h6>
+                        <h2 class="mb-0">{{ total_clocked_in }}</h2>
+                    </div>
+                    <i class="bi bi-people-fill fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Your Classes</h6>
+                        <h2 class="mb-0">{{ classes.count }}</h2>
+                    </div>
+                    <i class="bi bi-collection-fill fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Date</h6>
+                        <h5 class="mb-0">{% now "F j, Y" %}</h5>
+                    </div>
+                    <i class="bi bi-calendar-event fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-person-check"></i> Currently Clocked In Students</h5>
+    </div>
+    <div class="card-body">
+        {% if clocked_in_students %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Code</th>
+                        <th>Class</th>
+                        <th>Clocked In</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in clocked_in_students %}
+                    <tr>
+                        <td>
+                            <strong>{{ student.full_name }}</strong>
+                        </td>
+                        <td><code>{{ student.code }}</code></td>
+                        <td>{{ student.classes }}</td>
+                        <td>{{ student.clocked_in_at|date:"g:i A" }}</td>
+                        <td>
+                            <span class="badge bg-success">{{ student.duration }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-inbox fs-1"></i>
+            <p class="mt-2">No students currently clocked in.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

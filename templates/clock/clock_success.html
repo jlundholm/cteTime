@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clock {{ action_taken }} - CTE Timeclock</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .success-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 50px;
+            width: 100%;
+            max-width: 500px;
+            margin: 20px;
+            text-align: center;
+        }
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 4rem;
+            animation: pop 0.5s ease;
+        }
+        .success-icon.in {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+        .success-icon.out {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            color: white;
+        }
+        @keyframes pop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .success-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        .student-name {
+            font-size: 1.5rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .success-message {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+        .timestamp {
+            font-size: 1rem;
+            color: #9ca3af;
+            margin-bottom: 30px;
+        }
+        .btn-continue {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .btn-continue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+        @media (max-width: 576px) {
+            .success-container {
+                padding: 30px;
+                margin: 15px;
+            }
+            .success-icon {
+                width: 100px;
+                height: 100px;
+                font-size: 3rem;
+            }
+            .success-title {
+                font-size: 1.5rem;
+            }
+            .student-name {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon {% if status == 'IN' %}in{% else %}out{% endif %}">
+            <i class="bi {% if status == 'IN' %}bi-box-arrow-in-right{% else %}bi-box-arrow-right{% endif %}"></i>
+        </div>
+        
+        <h1 class="success-title">{{ action_taken }} Successful!</h1>
+        <div class="student-name">{{ student.full_name }}</div>
+        <div class="success-message">
+            {% if status == 'IN' %}
+                You are now clocked in.
+            {% else %}
+                You are now clocked out.
+            {% endif %}
+        </div>
+        <div class="timestamp">
+            {{ last_punch.timestamp|date:"F j, Y g:i A" }}
+        </div>
+        
+        <a href="{% url 'clock' %}" class="btn btn-continue">
+            <i class="bi bi-arrow-left"></i> Clock Another Student
+        </a>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CTE Timeclock{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 250px;
+        }
+        body {
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            padding-top: 20px;
+            z-index: 1000;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            padding: 12px 20px;
+            margin: 4px 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+        .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        .sidebar .nav-link i {
+            width: 24px;
+        }
+        .sidebar-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 10px 20px;
+            margin-bottom: 30px;
+            display: block;
+            text-decoration: none;
+        }
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            min-height: 100vh;
+        }
+        .top-bar {
+            background: white;
+            padding: 15px 30px;
+            margin: -30px -30px 30px -30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <nav class="sidebar d-md-block">
+        <a href="{% url 'dashboard' %}" class="sidebar-brand">
+            <i class="bi bi-clock-history"></i> CTE Time
+        </a>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if 'students' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'student_list' %}">
+                    <i class="bi bi-people"></i> Students
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'punch_list' %}active{% endif %}" href="{% url 'punch_list' %}">
+                    <i class="bi bi-clock"></i> Punch History
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'report' %}active{% endif %}" href="{% url 'report' %}">
+                    <i class="bi bi-file-earmark-bar-graph"></i> Reports
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'class_list' %}active{% endif %}" href="{% url 'class_list' %}">
+                    <i class="bi bi-collection"></i> Classes
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}" href="{% url 'settings' %}">
+                    <i class="bi bi-gear"></i> Settings
+                </a>
+            </li>
+            {% if user.is_staff %}
+            <li class="nav-item">
+                <a class="nav-link {% if 'teacher' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'teacher_list' %}">
+                    <i class="bi bi-person-badge"></i> Teachers
+                </a>
+            </li>
+            {% endif %}
+            <li class="nav-item mt-3">
+                <a class="nav-link {% if request.resolver_match.url_name == 'clear_year' %}active{% endif %}" href="{% url 'clear_year' %}">
+                    <i class="bi bi-trash"></i> Clear Year Data
+                </a>
+            </li>
+        </ul>
+        <div class="mt-auto p-3 text-white-50" style="position: absolute; bottom: 0; width: 100%;">
+            <div class="d-flex justify-content-between align-items-center">
+                <small>{{ user.username }}</small>
+                <a href="{% url 'logout' %}" class="text-white-50"><i class="bi bi-box-arrow-right"></i></a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="main-content">
+        <div class="top-bar d-flex justify-content-between align-items-center">
+            <div>
+                {% if school_year %}<span class="badge bg-secondary me-2">{{ school_year }}</span>{% endif %}
+            </div>
+            <div>
+                <a href="{% url 'clock' %}" class="btn btn-sm btn-outline-primary" target="_blank">
+                    <i class="bi bi-box-arrow-up-right"></i> Open Clock
+                </a>
+            </div>
+        </div>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </div>
+    {% else %}
+    {% block login_content %}{% endblock %}
+    {% endif %}
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

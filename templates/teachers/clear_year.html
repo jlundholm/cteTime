@@ -1,0 +1,72 @@
+{% extends 'teachers/base.html' %}
+
+{% block title %}Clear Year Data - CTE Timeclock{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-trash"></i> Clear Year Data</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Danger Zone</h5>
+            </div>
+            <div class="card-body">
+                <p class="lead">Clear all data for school year <strong>{{ school_year }}</strong></p>
+                
+                <p>This will permanently delete the following data:</p>
+                
+                <ul class="list-group mb-4">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Classes
+                        <span class="badge bg-danger rounded-pill">{{ class_count }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Students
+                        <span class="badge bg-danger rounded-pill">{{ student_count }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Class Enrollments
+                        <span class="badge bg-danger rounded-pill">{{ class_student_count }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Punch Records
+                        <span class="badge bg-danger rounded-pill">{{ punch_count }}</span>
+                    </li>
+                </ul>
+                
+                <div class="alert alert-warning">
+                    <i class="bi bi-info-circle"></i> 
+                    <strong>Note:</strong> Teacher accounts will NOT be deleted. They will remain active.
+                </div>
+                
+                <p class="text-muted">This action cannot be undone. Consider exporting your data first.</p>
+                
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Delete All {{ school_year }} Data
+                    </button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="bi bi-arrow-repeat"></i> End of Year Process</h5>
+                <p class="text-muted">Use this feature at the end of each school year to:</p>
+                <ul class="text-muted">
+                    <li>Clean up old student data</li>
+                    <li>Prepare for new school year</li>
+                    <li>Keep teacher accounts active</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

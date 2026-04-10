@@ -1,0 +1,97 @@
+{% extends 'teachers/base.html' %}
+
+{% block title %}Reports - CTE Timeclock{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-file-earmark-bar-graph"></i> Weekly Reports</h1>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-filter"></i> Generate Report</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">Class</label>
+                    {{ form.class_model }}
+                    {% if form.class_model.errors %}
+                        <div class="text-danger small">{{ form.class_model.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Week Starting</label>
+                    {{ form.week_start }}
+                    {% if form.week_start.errors %}
+                        <div class="text-danger small">{{ form.week_start.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Generate
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if student_data %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="bi bi-table"></i> {{ class_model.name }} - Week of {{ week_start|date:"M j, Y" }}
+        </h5>
+        <form method="POST" action="{% url 'report_send' %}" class="d-inline">
+            {% csrf_token %}
+            <input type="hidden" name="class_id" value="{{ class_model.id }}">
+            <input type="hidden" name="week_start" value="{{ week_start|date:"Y-m-d" }}">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-envelope"></i> Email Report to Me
+            </button>
+        </form>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Code</th>
+                        <th>Total Hours</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in student_data %}
+                    <tr>
+                        <td><strong>{{ data.student.full_name }}</strong></td>
+                        <td><code>{{ data.student.code }}</code></td>
+                        <td>
+                            <span class="badge bg-primary fs-6">{{ data.total_hours }}h {{ data.total_minutes }}m</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot class="table-light">
+                    <tr>
+                        <td colspan="2"><strong>Grand Total</strong></td>
+                        <td>
+                            {% with student_data|length as total_hours %}
+                            {% endwith %}
+                            <strong class="text-success">
+                                {% with student_data|length as count %}
+                                {% endwith %}
+                                {{ student_data|length }} students
+                            </strong>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

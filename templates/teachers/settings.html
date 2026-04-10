@@ -1,0 +1,96 @@
+{% extends 'teachers/base.html' %}
+
+{% block title %}Settings - CTE Timeclock{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-gear"></i> Settings</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-envelope"></i> Email Settings (Gmail SMTP)</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">SMTP Host</label>
+                            {{ form.smtp_host }}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Port</label>
+                            {{ form.smtp_port }}
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <div class="form-check">
+                                {{ form.use_tls }}
+                                <label class="form-check-label" for="{{ form.use_tls.id_for_label }}">Use TLS</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">SMTP Username</label>
+                        {{ form.smtp_username }}
+                        <div class="form-text">Your district Gmail address</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">SMTP Password</label>
+                        {{ form.smtp_password }}
+                        <div class="form-text">
+                            Use a Gmail App Password (16 characters). 
+                            <a href="https://support.google.com/accounts/answer/185833" target="_blank">Learn how to create one</a>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label">From Email</label>
+                        {{ form.smtp_from_email }}
+                        <div class="form-text">The email address that appears in the "From" field</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Save Settings
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Gmail Setup Instructions</h5>
+            </div>
+            <div class="card-body">
+                <ol class="mb-0">
+                    <li class="mb-2">Go to your Google Account settings at <a href="https://myaccount.google.com" target="_blank">myaccount.google.com</a></li>
+                    <li class="mb-2">Navigate to <strong>Security</strong> and enable 2-Step Verification if not already enabled</li>
+                    <li class="mb-2">Go to <strong>App passwords</strong> (search for it in the search bar)</li>
+                    <li class="mb-2">Select "Mail" as the app and "Other" as the device, then enter "CTE Timeclock"</li>
+                    <li class="mb-2">Copy the 16-character password and paste it into the SMTP Password field above</li>
+                    <li class="mb-2">Enter your Gmail address in both Username and From Email fields</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5><i class="bi bi-shield-check"></i> Account Info</h5>
+                <p class="mb-1"><strong>Logged in as:</strong></p>
+                <p class="mb-1">{{ user.username }}</p>
+                <p class="mb-1"><strong>Email:</strong></p>
+                <p class="mb-0">{{ user.email|default:"Not set" }}</p>
+                <hr>
+                <p class="text-muted small mb-0">Reports will be sent to your account email address. Make sure it's configured.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

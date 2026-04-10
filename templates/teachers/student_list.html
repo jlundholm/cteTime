@@ -1,0 +1,101 @@
+{% extends 'teachers/base.html' %}
+
+{% block title %}Students - CTE Timeclock{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-people"></i> Students</h1>
+    <a href="{% url 'student_add' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Add Student
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control" 
+                       placeholder="Search by name or code..." value="{{ search }}">
+            </div>
+            <div class="col-md-3">
+                <select name="class" class="form-select">
+                    <option value="">All Classes</option>
+                    {% for class in classes %}
+                    <option value="{{ class.id }}" {% if class_filter == class.id|stringformat:"s" %}selected{% endif %}>
+                        {{ class.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+            <div class="col-md-2">
+                <a href="{% url 'student_list' %}" class="btn btn-outline-secondary w-100">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if page_obj %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Classes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in page_obj %}
+                    <tr>
+                        <td>
+                            <strong>{{ student.full_name }}</strong>
+                        </td>
+                        <td><code>{{ student.code }}</code></td>
+                        <td>
+                            {% with student.classstudent_set.count as class_count %}
+                                <span class="badge bg-secondary">{{ class_count }} class{{ class_count|pluralize:"es" }}</span>
+                            {% endwith %}
+                        </td>
+                        <td>
+                            <a href="{% url 'student_edit' student.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'student_delete' student.id %}" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if page_obj.has_other_pages %}
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+                {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-people fs-1"></i>
+            <p class="mt-2">No students found. Add your first student to get started.</p>
+            <a href="{% url 'student_add' %}" class="btn btn-primary">Add Student</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

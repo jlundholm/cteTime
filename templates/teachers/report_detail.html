@@ -1,0 +1,74 @@
+{% extends 'teachers/base.html' %}
+
+{% block title %}Report Detail - CTE Timeclock{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+        <i class="bi bi-file-earmark-bar-graph"></i> {{ class_model.name }} Report
+    </h1>
+    <a href="{% url 'report' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Reports
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <p class="mb-1"><strong>Class:</strong> {{ class_model.name }}</p>
+                <p class="mb-1"><strong>Week:</strong> {{ week_start|date:"M j" }} - {{ week_end|date:"M j, Y" }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="mb-1"><strong>School Year:</strong> {{ school_year }}</p>
+                <p class="mb-1"><strong>Students:</strong> {{ student_data|length }}</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <form method="POST" action="{% url 'report_send' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="class_id" value="{{ class_model.id }}">
+                    <input type="hidden" name="week_start" value="{{ week_start|date:"Y-m-d" }}">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-envelope"></i> Email Report
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Code</th>
+                        <th>Total Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in student_data %}
+                    <tr>
+                        <td><strong>{{ data.student.full_name }}</strong></td>
+                        <td><code>{{ data.student.code }}</code></td>
+                        <td>
+                            <span class="badge bg-primary fs-6">
+                                {{ data.total_hours }}h {{ data.total_minutes }}m
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted py-4">
+                            No student data for this week
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
