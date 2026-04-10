@@ -43,6 +43,7 @@ A timeclock application for Career and Technical Education (CTE) classrooms, all
 cd /opt
 git clone https://github.com/jlundholm/cteTime.git
 cd cteTime
+sudo chown -R $USER:www-data /opt/cteTime
 ```
 
 ### 2. Set Temp Permissions
@@ -229,6 +230,29 @@ sudo chmod -R 755 /opt/cteTime
 - Verify MariaDB is running: `sudo systemctl status mariadb`
 - Check credentials in `.env`
 - Test connection: `mysql -u cteTime -p cteTime`
+
+### Missing Database Tables
+If you encounter "Table doesn't exist" errors, create the tables manually:
+
+```bash
+# Create core_student table
+sudo mysql -u cteTime -p cteTime -e "CREATE TABLE core_student (id INT AUTO_INCREMENT PRIMARY KEY, first_name VARCHAR(150) NOT NULL, last_name VARCHAR(150) NOT NULL, code VARCHAR(6) NOT NULL UNIQUE, created_at DATETIME NOT NULL);"
+
+# Create core_punch table
+sudo mysql -u cteTime -p cteTime -e "CREATE TABLE core_punch (id INT AUTO_INCREMENT PRIMARY KEY, student_id INT NOT NULL, punch_type VARCHAR(3) NOT NULL, timestamp DATETIME NOT NULL, school_year VARCHAR(9) NOT NULL, FOREIGN KEY (student_id) REFERENCES core_student(id) ON DELETE CASCADE);"
+
+# Create core_classstudent table
+sudo mysql -u cteTime -p cteTime -e "CREATE TABLE core_classstudent (id INT AUTO_INCREMENT PRIMARY KEY, class_model_id INT NOT NULL, student_id INT NOT NULL, FOREIGN KEY (class_model_id) REFERENCES core_class(id) ON DELETE CASCADE, FOREIGN KEY (student_id) REFERENCES core_student(id) ON DELETE CASCADE, UNIQUE KEY core_classstudent_class_student (class_model_id, student_id));"
+
+# Create core_schoolyear table
+sudo mysql -u cteTime -p cteTime -e "CREATE TABLE core_schoolyear (id INT AUTO_INCREMENT PRIMARY KEY, year VARCHAR(9) NOT NULL UNIQUE);"
+
+# Create core_emailsettings table
+sudo mysql -u cteTime -p cteTime -e "CREATE TABLE core_emailsettings (id INT AUTO_INCREMENT PRIMARY KEY, smtp_host VARCHAR(100) NOT NULL DEFAULT 'smtp.gmail.com', smtp_port INT NOT NULL DEFAULT 587, smtp_username VARCHAR(254) NOT NULL DEFAULT '', smtp_password VARCHAR(256) NOT NULL DEFAULT '', smtp_from_email VARCHAR(254) NOT NULL DEFAULT '', use_tls TINYINT(1) NOT NULL DEFAULT 1);"
+
+# Insert default email settings
+sudo mysql -u cteTime -p cteTime -e "INSERT IGNORE INTO core_emailsettings (id, smtp_host, smtp_port, smtp_username, smtp_password, smtp_from_email, use_tls) VALUES (1, 'smtp.gmail.com', 587, '', '', '', 1);"
+```
 
 ### Email Not Sending
 - Verify Gmail App Password is correct
