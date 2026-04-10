@@ -22,6 +22,8 @@ import csv
 
 
 def login_view(request):
+    error_message = None
+    
     if request.user.is_authenticated:
         return redirect('dashboard')
     
@@ -35,11 +37,13 @@ def login_view(request):
                 login(request, user)
                 return redirect('dashboard')
             else:
-                messages.error(request, 'Invalid username or password.')
+                error_message = 'Invalid username or password.'
+        else:
+            error_message = 'Please correct the errors below.'
     else:
         form = LoginForm()
     
-    return render(request, 'teachers/login.html', {'form': form})
+    return render(request, 'teachers/login.html', {'form': form, 'login_error': error_message})
 
 
 def logout_view(request):

@@ -58,6 +58,13 @@
             {% endfor %}
         {% endif %}
         
+        {% if login_error %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-circle"></i> {{ login_error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endif %}
+        
         {% if form.non_field_errors %}
             {% for error in form.non_field_errors %}
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
