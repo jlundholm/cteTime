@@ -41,18 +41,25 @@ A timeclock application for Career and Technical Education (CTE) classrooms, all
 
 ```bash
 cd /opt
-sudo git clone https://github.com/jlundholm/cteTime.git
+git clone https://github.com/jlundholm/cteTime.git
 cd cteTime
 ```
 
-### 2. Install System Dependencies
+### 2. Set Temp Permissions
+
+```bash
+sudo chown -R your-username:www-data /opt/cteTime
+sudo chmod -R 755 /opt/cteTime
+```
+
+### 3. Install System Dependencies
 
 ```bash
 sudo apt update
-sudo apt install python3-venv python3-pip libmysqlclient-dev pkg-config
+sudo apt install python3-venv python3-pip libmysqlclient-dev pkg-config mariadb-server mariadb-client
 ```
 
-### 3. Create Database
+### 4. Create Database
 
 ```bash
 sudo mysql
@@ -66,7 +73,7 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-### 4. Create Virtual Environment
+### 5. Create Virtual Environment
 
 ```bash
 python3 -m venv venv
@@ -74,7 +81,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 5. Configure Environment
+### 6. Configure Environment
 
 ```bash
 cp .env.example .env
@@ -100,19 +107,19 @@ EMAIL_HOST_PASSWORD=your-app-password
 DEFAULT_FROM_EMAIL=your-email@gmail.com
 ```
 
-### 6. Run Migrations
+### 7. Run Migrations
 
 ```bash
 python manage.py migrate
 ```
 
-### 7. Create Superuser
+### 8. Create Superuser
 
 ```bash
 python manage.py createsuperuser
 ```
 
-### 8. Configure Gunicorn
+### 9. Configure Gunicorn
 
 Create systemd service:
 ```bash
@@ -140,7 +147,7 @@ sudo systemctl enable cteTime
 sudo systemctl start cteTime
 ```
 
-### 9. Configure Nginx
+### 10. Configure Nginx
 
 ```bash
 sudo nano /etc/nginx/sites-available/cteTime
@@ -168,7 +175,7 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-### 10. Set Permissions
+### 11. Set Permissions
 
 ```bash
 sudo chown -R www-data:www-data /opt/cteTime
