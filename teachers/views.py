@@ -94,7 +94,7 @@ def dashboard(request):
                 school_year=school_year,
                 classstudent__student=punch.student
             ).values_list('name', flat=True)
-            punch.student.classes = ', '.join(student_classes)
+            punch.student.class_names = ', '.join(student_classes)
             
             clocked_in_list.append(punch.student)
     
@@ -104,7 +104,7 @@ def dashboard(request):
             school_year=school_year,
             classstudent__student=student
         ).values_list('name', flat=True)
-        student.classes = ', '.join(student_classes)
+        student.class_names = ', '.join(student_classes)
     
     context = {
         'clocked_in_students': clocked_in_list,
