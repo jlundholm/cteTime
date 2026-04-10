@@ -121,7 +121,7 @@ def student_list(request):
     school_year = get_current_school_year()
     
     search = request.GET.get('search', '')
-    class_filter = request.GET.get('class', '')
+    class_filter = request.GET.get('class_filter', '')
     
     my_classes = StudentClass.objects.filter(teacher=request.user, school_year=school_year)
     my_class_ids = my_classes.values_list('id', flat=True)
@@ -247,7 +247,7 @@ def punch_list(request):
     
     if form.is_valid():
         student = form.cleaned_data.get('student')
-        class_filter = form.cleaned_data.get('class')
+        class_filter = form.cleaned_data.get('class_filter')
         start_date = form.cleaned_data.get('start_date')
         end_date = form.cleaned_data.get('end_date')
         punch_type = form.cleaned_data.get('punch_type')
@@ -293,7 +293,7 @@ def punch_export(request):
     
     if form.is_valid():
         student = form.cleaned_data.get('student')
-        class_filter = form.cleaned_data.get('class')
+        class_filter = form.cleaned_data.get('class_filter')
         start_date = form.cleaned_data.get('start_date')
         end_date = form.cleaned_data.get('end_date')
         

@@ -139,7 +139,7 @@ class PunchFilterForm(forms.Form):
             self.fields['student'].queryset = Student.objects.filter(
                 id__in=my_student_ids
             ).order_by('last_name', 'first_name')
-            self.fields['class'].queryset = my_classes
+            self.fields['class_filter'].queryset = my_classes
     
     student = forms.ModelChoiceField(
         queryset=Student.objects.none(),
@@ -168,7 +168,7 @@ class PunchFilterForm(forms.Form):
     )
     
     class Meta:
-        fields = ['student', 'class', 'start_date', 'end_date', 'punch_type']
+        fields = ['student', 'class_filter', 'start_date', 'end_date', 'punch_type']
 
 
 class ReportForm(forms.Form):
