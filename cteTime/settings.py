@@ -66,6 +66,7 @@ DATABASES = {
         'PORT': config('DB_PORT', default='3306'),
         'OPTIONS': {
             'charset': 'utf8mb4',
+            'init_command': "SET time_zone='+00:00'",
         },
     }
 }
@@ -87,7 +88,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'America/Denver'
 
 USE_I18N = True
 
