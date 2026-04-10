@@ -2,10 +2,41 @@
 
 {% block title %}Dashboard - CTE Timeclock{% endblock %}
 
+{% block extra_js %}
+<script>
+let countdown = 10;
+const refreshInterval = 10;
+
+function updateCountdown() {
+    countdown--;
+    const countdownEl = document.getElementById('refresh-countdown');
+    if (countdownEl) {
+        countdownEl.textContent = countdown;
+    }
+    if (countdown <= 0) {
+        location.reload();
+    }
+}
+
+function resetCountdown() {
+    countdown = refreshInterval;
+}
+
+setInterval(updateCountdown, 1000);
+document.addEventListener('click', resetCountdown);
+document.addEventListener('keypress', resetCountdown);
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1><i class="bi bi-speedometer2"></i> Dashboard</h1>
-    <span class="badge bg-primary fs-6">{{ school_year }}</span>
+    <div>
+        <span class="badge bg-primary fs-6 me-2">{{ school_year }}</span>
+        <span class="badge bg-secondary">
+            <i class="bi bi-arrow-repeat"></i> Refreshes in <span id="refresh-countdown">10</span>s
+        </span>
+    </div>
 </div>
 
 <div class="row mb-4">
