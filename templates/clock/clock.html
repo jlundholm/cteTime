@@ -173,6 +173,7 @@
         {% else %}
         <form method="POST">
             {% csrf_token %}
+            <input type="hidden" name="code" value="{{ student.code }}">
             <div class="status-display {% if status == 'IN' %}in{% else %}out{% endif %}">
                 <div class="clock-icon">
                     <i class="bi {% if status == 'IN' %}bi-check-circle{% else %}bi-x-circle{% endif %}"></i>
