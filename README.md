@@ -41,7 +41,7 @@ A timeclock application for Career and Technical Education (CTE) classrooms, all
 
 ```bash
 cd /opt
-sudo git clone https://github.com/yourrepo/cteTime.git
+sudo git clone https://github.com/jlundholm/cteTime.git
 cd cteTime
 ```
 
