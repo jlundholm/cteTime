@@ -22,26 +22,29 @@ import csv
 
 
 def login_view(request):
-    error_message = None
-    
     if request.user.is_authenticated:
         return redirect('dashboard')
     
     if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        
+        if username and password:
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
                 return redirect('dashboard')
             else:
-                error_message = 'Invalid username or password.'
-    else:
-        form = LoginForm()
+                error = 'Invalid username or password.'
+        else:
+            error = 'Username and password are required.'
+        
+        return render(request, 'teachers/login.html', {
+            'error': error,
+            'username': username,
+        })
     
-    return render(request, 'teachers/login.html', {'form': form, 'login_error': error_message})
+    return render(request, 'teachers/login.html')
 
 
 def logout_view(request):
