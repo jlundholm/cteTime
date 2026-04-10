@@ -38,8 +38,6 @@ def login_view(request):
                 return redirect('dashboard')
             else:
                 error_message = 'Invalid username or password.'
-        else:
-            error_message = 'Please correct the errors below.'
     else:
         form = LoginForm()
     
