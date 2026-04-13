@@ -23,6 +23,7 @@ urlpatterns = [
     path('classes/<int:pk>/delete/', views.class_delete, name='class_delete'),
     
     path('settings/', views.settings_view, name='settings'),
+    path('settings/test-email/', views.test_email_view, name='test_email'),
     path('clear-year/', views.clear_year_view, name='clear_year'),
     
     path('teachers/', views.teacher_list, name='teacher_list'),

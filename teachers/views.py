@@ -507,6 +507,36 @@ def settings_view(request):
 
 
 @login_required
+def test_email_view(request):
+    if not request.user.is_superuser:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+    
+    if request.method == 'POST':
+        test_email = request.POST.get('email')
+        if not test_email:
+            return JsonResponse({'error': 'Email address required'}, status=400)
+        
+        email_settings = EmailSettings.get_settings()
+        
+        if not email_settings.smtp_username or not email_settings.smtp_from_email:
+            return JsonResponse({'error': 'SMTP settings not configured'}, status=400)
+        
+        try:
+            send_mail(
+                subject='CTE Timeclock Test Email',
+                message='This is a test email from CTE Timeclock.\n\nIf you received this, your email settings are working correctly.',
+                from_email=email_settings.smtp_from_email,
+                recipient_list=[test_email],
+                fail_silently=False,
+            )
+            return JsonResponse({'success': True, 'message': f'Test email sent to {test_email}'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+@login_required
 def clear_year_view(request):
     school_year = get_current_school_year()
     

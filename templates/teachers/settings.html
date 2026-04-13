@@ -62,6 +62,22 @@
             </div>
         </div>
         
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-send-check"></i> Test Email</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Send a test email to verify your SMTP settings are working correctly.</p>
+                <div class="input-group">
+                    <input type="email" class="form-control" id="test-email" placeholder="Enter email address">
+                    <button class="btn btn-info" type="button" id="send-test-btn">
+                        <i class="bi bi-send"></i> Send Test Email
+                    </button>
+                </div>
+                <div id="test-email-result" class="mt-2"></div>
+            </div>
+        </div>
+        
         <div class="card">
             <div class="card-header">
                 <h5 class="mb-0"><i class="bi bi-info-circle"></i> Gmail Setup Instructions</h5>
@@ -93,4 +109,43 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('send-test-btn').addEventListener('click', function() {
+    const email = document.getElementById('test-email').value;
+    const resultDiv = document.getElementById('test-email-result');
+    
+    if (!email) {
+        resultDiv.innerHTML = '<span class="text-danger">Please enter an email address</span>';
+        return;
+    }
+    
+    resultDiv.innerHTML = '<span class="text-muted"><i class="bi bi-hourglass-split"></i> Sending...</span>';
+    document.getElementById('send-test-btn').disabled = true;
+    
+    fetch('{% url "test_email" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: 'email=' + encodeURIComponent(email)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('send-test-btn').disabled = false;
+        if (data.success) {
+            resultDiv.innerHTML = '<span class="text-success"><i class="bi bi-check-circle"></i> ' + data.message + '</span>';
+        } else {
+            resultDiv.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle"></i> ' + data.error + '</span>';
+        }
+    })
+    .catch(error => {
+        document.getElementById('send-test-btn').disabled = false;
+        resultDiv.innerHTML = '<span class="text-danger">Error: ' + error + '</span>';
+    });
+});
+</script>
 {% endblock %}
