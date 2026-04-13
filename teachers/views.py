@@ -488,6 +488,10 @@ def class_delete(request, pk):
 
 @login_required
 def settings_view(request):
+    if not request.user.is_superuser:
+        messages.error(request, 'Only administrators can access settings.')
+        return redirect('dashboard')
+    
     email_settings = EmailSettings.get_settings()
     
     if request.method == 'POST':
